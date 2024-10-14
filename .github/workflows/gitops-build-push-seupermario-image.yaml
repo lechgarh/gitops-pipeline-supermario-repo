@@ -1,40 +1,32 @@
-name: "Build and push Super Mario Docker image with dynamic tag to Docker Hub"
- 
+name: "Build and push Super Mario Docker image with dynamic version to Docker Hub"
+
 on:
   push:
     branches:
       - main
- 
- 
+
 jobs:
   build_push_supermario_docker_image:
     runs-on: ubuntu-latest
- 
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Read the current version from GitHub Variable
-        id: read_version
-        run: echo "VERSION=${{ vars.Mario_VERSION }}" >> $GITHUB_ENV
-
-      - name: Increment the version
-        id: increment_version
+      - name: Set version using GitHub Run Number
         run: |
-          NEW_VERSION=$(( $VERSION + 1 ))
-          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-          echo "Version incremented to: $NEW_VERSION"
+          VERSION=${{ github.run_number }}
+          echo "Using GitHub run number as version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Update the version in GitHub Repository Variables
-        run: |
-          # Use GitHub CLI to update the repository variable
-          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
-          gh variable set VERSION -b "${{ env.Mario_VERSION }}"
-   
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
- 
+
       - name: Build and Push Docker Image
         run: |
-          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.Mario_VERSION }} .
-          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.Mario_VERSION }}
+          # Build the Docker image using the run number as the version
+          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }} .
+          
+          # Push the Docker image to Docker Hub
+          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }}"
+          
