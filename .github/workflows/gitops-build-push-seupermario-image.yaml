@@ -1,25 +1,50 @@
 name: "Build and push Super Mario Docker image with dynamic tag to Docker Hub"
- 
+
 on:
   push:
     branches:
       - main
- 
-env:
-  VERSION: $(( $(cat version.txt) + 1 ))
-  
+
 jobs:
   build_push_supermario_docker_image:
     runs-on: ubuntu-latest
- 
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-   
+
+      - name: Increment the version in version.txt
+        run: |
+          # Read the current version from version.txt
+          VERSION=$(cat version.txt)
+          
+          # Increment the version by 1
+          NEW_VERSION=$((VERSION + 1))
+          
+          # Write the incremented version back to version.txt
+          echo $NEW_VERSION > version.txt
+          
+          # Output the new version for logging
+          echo "Version incremented to: $NEW_VERSION"
+          
+          # Set the new version as an environment variable for later steps
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Commit the updated version.txt
+        run: |
+          git config --local user.email "h.lechgar.com"
+          git config --local user.name "hatim"
+          git add version.txt
+          git commit -m "Increment version to ${{ env.NEW_VERSION }}"
+          git push
+
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
- 
+
       - name: Build and Push Docker Image
         run: |
-          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }} .
-          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }}
+          # Build the Docker image with the incremented version tag
+          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.NEW_VERSION }} .
+          
+          # Push the Docker image to Docker Hub
+          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.NEW_VERSION }}"
