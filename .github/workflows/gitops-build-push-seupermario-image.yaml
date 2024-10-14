@@ -5,7 +5,7 @@ on:
     branches:
       - main
  
-  
+ 
 jobs:
   build_push_supermario_docker_image:
     runs-on: ubuntu-latest
@@ -13,36 +13,28 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Increment the version in version.txt
+
+      - name: Read the current version from GitHub Variable
+        id: read_version
+        run: echo "VERSION=${{ vars.Mario_VERSION }}" >> $GITHUB_ENV
+
+      - name: Increment the version
+        id: increment_version
         run: |
-          # Read the current version from version.txt
-          VERSION=$(cat version.txt)
-          
-          # Increment the version by 1
-          NEW_VERSION=$((VERSION + 1))
-          
-          # Write the incremented version back to version.txt
-          echo $NEW_VERSION > version.txt
-          
-          # Output the new version for logging
-          echo "Version incremented to: $NEW_VERSION"
-          
-          # Set the new version as an environment variable for later steps
+          NEW_VERSION=$(( $VERSION + 1 ))
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "Version incremented to: $NEW_VERSION"
 
-      - name: Commit the updated version.txt
+      - name: Update the version in GitHub Repository Variables
         run: |
-          git config --local user.email "you@example.com"
-          git config --local user.name "Your Name"
-          git add version.txt
-          git commit -m "Increment version to ${{ env.NEW_VERSION }}"
-          git push
-
+          # Use GitHub CLI to update the repository variable
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          gh variable set VERSION -b "${{ env.Mario_VERSION }}"
    
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
  
       - name: Build and Push Docker Image
         run: |
-          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }} .
-          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }}
+          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.Mario_VERSION }} .
+          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.Mario_VERSION }}
