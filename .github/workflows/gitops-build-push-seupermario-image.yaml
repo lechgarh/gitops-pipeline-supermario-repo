@@ -28,5 +28,4 @@ jobs:
           docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }} .
           
           # Push the Docker image to Docker Hub
-          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }}"
-          
+          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }}
