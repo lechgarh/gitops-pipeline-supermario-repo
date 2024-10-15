@@ -16,20 +16,14 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
-      - name: Set version using GitHub Run Number
-        run: |
-            VERSION=${{ github.run_number }}
-            echo "Using GitHub run number as version: $VERSION"
-            echo "VERSION=$VERSION" >> $GITHUB_ENV
  
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
         
       - name: Get Docker Image from Docker Hub
         run: |
-          docker pull docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }}
-          docker save -o supermariolatestdockerimage.tar docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }}
+          docker pull docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }}
+          docker save -o supermariolatestdockerimage.tar docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }}
      
       - name: Run Trivy vulnerability scanner in tarball mode
         uses: aquasecurity/trivy-action@master
