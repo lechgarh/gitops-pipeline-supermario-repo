@@ -29,7 +29,9 @@ jobs:
       - name: List Files to Ensure TAR File Exists
         run: |
           echo "Listing files in the current directory:"
+          pwd
           ls -la
+          
 
       - name: Run Trivy vulnerability scanner in tarball mode
         uses: aquasecurity/trivy-action@master
