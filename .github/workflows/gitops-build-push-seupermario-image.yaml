@@ -17,7 +17,7 @@ jobs:
         run: |
           VERSION=${{ github.run_number }}
           echo "Using GitHub run number as version: $VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "MARIO_VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
@@ -25,7 +25,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Build the Docker image using the run number as the version
-          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }} .
+          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }} .
           
           # Push the Docker image to Docker Hub
-          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.VERSION }}
+          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }}
