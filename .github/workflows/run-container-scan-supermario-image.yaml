@@ -1,9 +1,10 @@
-name: "Run Container Scan on Super Mario Docker Image with Quality Gate"
+name: "Build and push Super Mario Docker image with dynamic version to Docker Hub"
  
-on:
-  push:
-    branches:
-      - main
+on: 
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+    - completed
  
 env:
   VERSION: $(( $(cat version.txt) + 1 ))
