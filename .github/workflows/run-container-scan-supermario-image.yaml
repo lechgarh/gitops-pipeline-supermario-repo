@@ -23,8 +23,8 @@ jobs:
         
       - name: Get Docker Image from Docker Hub
         run: |
-          docker pull docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }}
-          docker save -o supermariolatestdockerimage.tar docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }}
+          docker pull docker.io/hlechgar/supermariogitopsproject:latest
+          docker save -o supermariolatestdockerimage.tar docker.io/hlechgar/supermariogitopsproject:latest
      
       - name: Run Trivy vulnerability scanner in tarball mode
         uses: aquasecurity/trivy-action@master
