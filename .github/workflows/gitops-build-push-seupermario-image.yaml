@@ -24,8 +24,10 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          # Build the Docker image using the run number as the version
-          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }} .
+          # Build the Docker image with both the version and 'latest' tag in one command
+          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }} \
+                       -t docker.io/hlechgar/supermariogitopsproject:latest .      
           
           # Push the Docker image to Docker Hub
           docker push docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }}
+        
