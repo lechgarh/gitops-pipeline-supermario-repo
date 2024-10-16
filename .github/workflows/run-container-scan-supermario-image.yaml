@@ -2,13 +2,10 @@ name: "Run Container Scan on Super Mario Docker Image with Quality Gate"
  
 on: 
   workflow_run:
-    workflows: ["Build and push Super Mario Docker image with dynamic version to Docker Hub"]
+    workflows: ["Run Container Image Scan"]
     types:
     - completed
- 
-env:
-  VERSION: $(( $(cat version.txt) + 1 ))
-  
+   
 jobs:
   
   run_container_image_scan_on_supermario_docker_image:
@@ -23,8 +20,8 @@ jobs:
         
       - name: Get Docker Image from Docker Hub
         run: |
-          docker pull docker.io/hlechgar/supermariogitopsproject:latest
-          docker save -o supermariolatestdockerimage.tar docker.io/hlechgar/supermariogitopsproject:latest
+          docker pull docker.io/hlechgar/supermariogitopsproject:${{ github.run_number }}
+          docker save -o supermariolatestdockerimage.tar docker.io/hlechgar/supermariogitopsproject:${{ github.run_number }}
      
       - name: List Files to Ensure TAR File Exists
         run: |

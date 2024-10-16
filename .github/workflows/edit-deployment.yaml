@@ -1,0 +1,32 @@
+name: "Update Deployment after Scan"
+
+on:
+  workflow_run:
+    workflows: ["Run Container Image Scan"]
+    types:
+      - completed
+
+jobs:
+  update_deployment:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Git Config
+        run: |
+           git config --global user.email "h.lechgar@gmail.com"
+           git config --global user.name "hatim"
+
+      - name: Get Version from Run Number
+        run: echo "VERSION=${{ github.event.workflow_run.run_number }}" >> $GITHUB_ENV
+
+      - name: Update Deployment YAML
+        run: |
+          git pull
+          sed -i "s|image: hlechgar/supermariogitopsproject:.*$|image: hlechgar/supermariogitopsproject:${{ github.run_number }}|" deployment.yaml
+          git add deployment.yaml
+          git commit -m "Updated deployment.yaml with Super Mario image tag to ${{ github.run_number }}"
+          git push

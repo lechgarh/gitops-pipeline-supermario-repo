@@ -1,9 +1,10 @@
 name: "Build and push Super Mario Docker image with dynamic version to Docker Hub"
 
-on:
-  push:
-    branches:
-      - main
+on: 
+  workflow_run:
+    workflows: ["Run SAST Scan on SuperMario Game Project"]
+    types:
+    - completed
 
 jobs:
   build_push_supermario_docker_image:
@@ -13,23 +14,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set version using GitHub Run Number
-        run: |
-          VERSION=${{ github.run_number }}
-          echo "Using GitHub run number as version: $VERSION"
-          echo "MARIO_VERSION=$VERSION" >> $GITHUB_ENV
-
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Build and Push Docker Image
         run: |
           # Build the Docker image with both the version and 'latest' tag in one command
-          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }} \
+          docker build -t docker.io/hlechgar/supermariogitopsproject:${{ github.run_number }} \
                        -t docker.io/hlechgar/supermariogitopsproject:latest .
           
           # Push the Docker image to Docker Hub
-          docker push docker.io/hlechgar/supermariogitopsproject:${{ env.MARIO_VERSION }}
+          docker push docker.io/hlechgar/supermariogitopsproject:${{ github.run_number }}
           docker push docker.io/hlechgar/supermariogitopsproject:latest
 
         
