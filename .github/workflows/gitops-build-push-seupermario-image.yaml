@@ -1,10 +1,10 @@
 name: "Build and push Super Mario Docker image with dynamic version to Docker Hub"
 
-on: 
-  workflow_run:
-    workflows: ["Run SAST Scan on SuperMario Game Project"]
-    types:
-    - completed
+# on: 
+#   workflow_run:
+#     workflows: ["Run SAST Scan on SuperMario Game Project"]
+#     types:
+#     - completed
 
 jobs:
   build_push_supermario_docker_image:

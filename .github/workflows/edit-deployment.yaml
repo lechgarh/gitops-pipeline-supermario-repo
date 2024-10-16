@@ -1,10 +1,10 @@
 name: "Update Deployment after Scan"
 
-on:
-  workflow_run:
-    workflows: ["Run Container Scan on Super Mario Docker Image with Quality Gate"]
-    types:
-      - completed
+# on:
+#   workflow_run:
+#     workflows: ["Run Container Scan on Super Mario Docker Image with Quality Gate"]
+#     types:
+#       - completed
 
 jobs:
   update_deployment:
@@ -20,8 +20,6 @@ jobs:
            git config --global user.email "h.lechgar@gmail.com"
            git config --global user.name "hatim"
 
-      - name: Get Version from Run Number
-        run: echo "VERSION=${{ github.event.workflow_run.run_number }}" >> $GITHUB_ENV
 
       - name: Update Deployment YAML
         run: |
