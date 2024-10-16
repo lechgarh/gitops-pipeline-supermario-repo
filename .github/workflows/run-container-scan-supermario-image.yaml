@@ -2,7 +2,7 @@ name: "Run Container Scan on Super Mario Docker Image with Quality Gate"
  
 on: 
   workflow_run:
-    workflows: ["Run Container Image Scan"]
+    workflows: ["Build and push Super Mario Docker image with dynamic version to Docker Hub"]
     types:
     - completed
    

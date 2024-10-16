@@ -2,12 +2,13 @@ name: "Update Deployment after Scan"
 
 on:
   workflow_run:
-    workflows: ["Run Container Image Scan"]
+    workflows: ["Run Container Scan on Super Mario Docker Image with Quality Gate"]
     types:
       - completed
 
 jobs:
   update_deployment:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
